@@ -4,11 +4,81 @@
 	<meta charset="utf-8">
 	<title>Walking for Sean</title>
 	<link rel="stylesheet" href="wfs.css">
-	  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
-	  <meta name="mobile-web-app-capable" content="yes">
-	  <meta name="apple-mobile-web-app-capable" content="yes" /> 
-	  <meta name="apple-touch-fullscreen" content="yes" />
-	  <meta name="viewport" 
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-touch-fullscreen" content="yes" />
+	<script type="application/javascript">
+		const API = "https://walkingforsean.herokuapp.com"
+		const DETAILS = "/total"
+		const GUESSES = "/guesses"
+		const PINTS = "/pints"
+		window.addEventListener("DOMContentLoaded", () => {
+			Promise
+					.all([
+						fetch(API + DETAILS),
+						fetch(API + PINTS),
+						fetch(API + GUESSES),
+					])
+					.then(async (responses) => {
+						const pints = await responses[1].text()
+						populateDetails(await responses[0].json())
+						populatePints(pints)
+						populateGuesses(await responses[2].json(), pints)
+					})
+		});
+
+		function populateDetails(totals) {
+			document.querySelector("[data-total]").innerText = totals.grandTotal;
+			document.querySelector("[data-target]").innerText = totals.target;
+			document.querySelector("[data-percentage]").innerText = totals.percentageRaised + "%"
+		}
+
+		function populatePints(pints) {
+			document.querySelector("[data-pints]").innerText = pints
+			const pintHolder = document.querySelector("[data-pints-holder]")
+			for (let i = 0; i < pints; i++) {
+				const pint = document.createElement("div")
+				const beer = document.createElement("div")
+				const glass = document.createElement("div")
+
+				pint.classList.add("pint-drunk", "pint-drunk-" + randomIntFromRange(1,4))
+				beer.className = "beer-drunk"
+				glass.className = "glass-drunk"
+				pint.appendChild(beer)
+				pint.appendChild(glass)
+
+				pintHolder.appendChild(pint)
+			}
+		}
+
+		function populateGuesses(guesses, pints) {
+			const winnerGuesses = guesses.filter(entry => entry.guess >= pints)
+					.sort((first, second) => first.guess - second.guess);
+			const loserGuesses = guesses.filter(entry => entry.guess < pints)
+					.sort((first, second) => first.guess - second.guess)
+					.reverse();
+
+			const winnersHolder = document.querySelector("[data-winners]")
+			const losersHolder = document.querySelector("[data-losers]")
+
+			winnerGuesses.forEach(winner => addEntry(winner, winnersHolder))
+			loserGuesses.forEach(loser => addEntry(loser, losersHolder))
+		}
+
+		function addEntry(entry, holder) {
+			const item = document.createElement("li")
+			item.innerText = entry.name
+			const guess = document.createElement("span")
+			guess.innerText = entry.guess
+			item.appendChild(guess)
+			holder.appendChild(item)
+		}
+
+		function randomIntFromRange(min, max) {
+			return Math.floor(Math.random() * (max - min + 1) + min)
+		}
+	</script>
 </head>
 <body>
 	<div class="wrapper">
@@ -17,181 +87,41 @@
 			<div class="row row-reverse">
 				<div class="column">
 					<div class="progress">
-						<div class="beer">24%</div>
+						<div class="beer" data-percentage>?</div>
 						<div class="pint-glass"></div>
 					</div>
-					<h2>&pound;1300 / <span>&pound;5000</span></h2>
+					<h2>&pound;<span data-total>?</span> / &pound;<span data-target>?</span></h2>
 				</div>
 
 				<div class="column">
-					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tincidunt metus gravida risus dapibus tempus. Maecenas quis maximus felis. Vestibulum tincidunt quis enim id faucibus. In mollis ligula ac urna maximus, nec viverra metus viverra. In tempor enim non enim volutpat vestibulum. Nulla dignissim sagittis ornare. Ut tincidunt lorem efficitur aliquam scelerisque.</p>
-					<p>Vestibulum tincidunt quis enim id faucibus. In mollis ligula ac urna maximus, nec viverra metus viverra. In tempor enim non enim volutpat vestibulum. Nulla dignissim sagittis ornare. Ut tincidunt lorem efficitur aliquam scelerisque.</p>
-					<a href="https://www.justgiving.com/fundraising/walkingforseanc2c">Have a guess on Just Giving</a>
+					<p>Mike & Bernie Crossey, Stuart Kent and Andy Hall are taking on Wainright's Coast to Coast walk,
+					in memory of Sean Crossey, with others joining them for sections along the way</p>
+					<p>This page tracks their beer consumption along the route.</p>
+					<p>Fancy having a guess at how mmany pints of the black stuff will be consumed along the way?</p>
+					<p>There's prizes to be won!</p>
+					<a href="https://www.justgiving.com/fundraising/walkingforseanc2c">Donate & have a guess on JustGiving</a>
 				</div>
 
 
 			</div>
 		</section>
-		<section class="clearfix">
-			<h1>Pints so far <span>115</span></h1>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-2"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-3"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-5"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-0"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-2"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-3"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-5"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-0"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-2"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-3"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-5"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-0"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-2"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-3"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-5"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-0"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-2"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-3"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-5"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-0"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>			
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-2"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-3"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-5"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-0"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-2"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-3"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-5"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-0"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-2"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-3"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-5"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-0"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-2"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-3"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-5"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-0"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-2"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-3"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-5"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-0"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-2"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-3"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-5"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-0"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-2"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-3"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-5"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-0"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-2"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-3"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-5"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-0"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-2"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-3"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-5"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-0"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-2"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-3"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-5"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-0"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-2"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-3"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-5"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-0"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-4"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>
-			<div class="pint-drunk pint-drunk-1"><div class="beer-drunk"></div><div class="glass-drunk"></div></div>				
+		<section class="clearfix" data-pints-holder>
+			<h1>Pints so far <span data-pints>?</span></h1>
 		</section>
 
 		<section>
 			<div class="row row-lists">
 				<div class="column">
 					<h1>First at the bar</h1>
-					<ul class="winners">
-						<li>Bernetta Roseborough <span>120</span></li>
-						<li>Elke Hardaway <span>134</span></li>
-						<li>Mitchell Shupp <span>154</span></li>
-						<li>Eulalia Schaper <span>160</span></li>
-						<li>Marlys Mcdougal <span>163</span></li>
-						<li>Domonique Levine <span>167</span></li>
-						<li>Jeannine Venturi <span>184</span></li>
-						<li>Larisa Eichenlaub <span>190</span></li>
-						<li>Julee Zink <span>204</span></li>
-						<li>Marquis Yancy <span>223</span></li>
-						<li>Augustus Schorn <span>246</span></li>
-						<li>Willy Edington <span>276</span></li>
-						<li>Maryetta Hagens <span>300</span></li>
+					<ul class="winners" data-winners>
 					</ul>
 				</div>
 				<div class="gutter"></div>
 				<div class="column">
 					<h1>Last orders</h1>
-					<ul class="losers">
-						<li>Wally Womack <span>116</span></li>
-						<li>Clifton Okamoto <span>112</span></li>
-						<li>Lorna Nesbit <span>97</span></li>
-						<li>Magan Pinon <span>94</span></li>
-						<li>Carl Hively <span>90</span></li>
-						<li>Herta Mcminn <span>86</span></li>
-						<li>Rico Sidwell <span>43</span></li>
+					<ul class="losers" data-losers>
 					</ul>
 				</div>
 	</div>
-
-
-
-
-
-
-
-
 </body>
 </html>
