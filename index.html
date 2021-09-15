@@ -28,12 +28,13 @@
 						])
 					})
 					.then(parsedResponses => {
-						const pints = parsedResponses[1]
-						populateDetails(parsedResponses[0])
-						populatePints(pints)
-						populateGuesses(parsedResponses[2], pints)
+						const pints = parsedResponses[1];
+						populateDetails(parsedResponses[0]);
+						populatePints(pints);
+						populateGuesses(parsedResponses[2], pints);
+						return pints;
 					})
-					.then(() => {
+					.then(pints => {
 						const observer = new IntersectionObserver(entries => {
 							// Loop over the entries
 							entries.forEach(entry => {
@@ -41,6 +42,11 @@
 								if (entry.isIntersecting) {
 									// Add the animation class
 									drinkPints();
+									try {
+										new CountUp(document.querySelector("[data-pints]"), pints).start();
+									} catch (e) {
+										document.querySelector("[data-pints]").innerText = pints;
+									}
 								}
 							});
 						});
