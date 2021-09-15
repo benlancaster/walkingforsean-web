@@ -52,24 +52,21 @@
 						});
 
 						observer.observe(document.querySelector("[data-pints]"));
-
 					});
 
 		});
 
 		function drinkPints(){
-			document.querySelectorAll(".beer-drunk").forEach(function(beer){
-				beer.classList.add('drink')
-			});
+			document.querySelectorAll(".beer-drunk").forEach(beer => beer.classList.add('drink'));
 		}
 
 		function populateDetails(totals) {
 			try {
-				new CountUp(document.querySelector("[data-total]"), totals.grandTotal).start()
+				new CountUp(document.querySelector("[data-total]"), totals.grandTotal).start();
 			} catch (e) {
 				document.querySelector("[data-total]").innerText = totals.grandTotal;
 			}
-			document.querySelector("[data-percentage]").innerText = totals.percentageRaised + "%"
+			document.querySelector("[data-percentage]").innerText = totals.percentageRaised + "%";
 
 			document.querySelector("[data-target]").innerText = totals.target;
 
@@ -80,22 +77,22 @@
 
 		function populatePints(pints) {
 			try {
-				new CountUp(document.querySelector("[data-pints]"), pints).start()
+				new CountUp(document.querySelector("[data-pints]"), pints).start();
 			} catch (e) {
-				document.querySelector("[data-pints]").innerText = pints
+				document.querySelector("[data-pints]").innerText = pints;
 			}
 
-			const pintHolder = document.querySelector("[data-pints-holder]")
+			const pintHolder = document.querySelector("[data-pints-holder]");
 			for (let i = 0; i < pints; i++) {
-				const pint = document.createElement("div")
-				const beer = document.createElement("div")
-				const glass = document.createElement("div")
+				const pint = document.createElement("div");
+				const beer = document.createElement("div");
+				const glass = document.createElement("div");
 
-				pint.classList.add("pint-drunk", "pint-drunk-" + randomIntFromRange(1,4))
-				beer.className = "beer-drunk"
-				glass.className = "glass-drunk"
-				pint.appendChild(beer)
-				pint.appendChild(glass)
+				pint.classList.add("pint-drunk", "pint-drunk-" + randomIntFromRange(1,4));
+				beer.className = "beer-drunk";
+				glass.className = "glass-drunk";
+				pint.appendChild(beer);
+				pint.appendChild(glass);
 
 				pintHolder.appendChild(pint);
 			}
@@ -108,24 +105,24 @@
 					.sort((first, second) => first.guess - second.guess)
 					.reverse();
 
-			const winnersHolder = document.querySelector("[data-winners]")
-			const losersHolder = document.querySelector("[data-losers]")
+			const winnersHolder = document.querySelector("[data-winners]");
+			const losersHolder = document.querySelector("[data-losers]");
 
-			winnerGuesses.forEach(winner => addEntry(winner, winnersHolder))
-			loserGuesses.forEach(loser => addEntry(loser, losersHolder))
+			winnerGuesses.forEach(winner => addEntry(winner, winnersHolder));
+			loserGuesses.forEach(loser => addEntry(loser, losersHolder));
 		}
 
 		function addEntry(entry, holder) {
-			const item = document.createElement("li")
-			item.innerText = entry.name
-			const guess = document.createElement("span")
-			guess.innerText = entry.guess
-			item.appendChild(guess)
-			holder.appendChild(item)
+			const item = document.createElement("li");
+			item.innerText = entry.name;
+			const guess = document.createElement("span");
+			guess.innerText = entry.guess;
+			item.appendChild(guess);
+			holder.appendChild(item);
 		}
 
 		function randomIntFromRange(min, max) {
-			return Math.floor(Math.random() * (max - min + 1) + min)
+			return Math.floor(Math.random() * (max - min + 1) + min);
 		}
 	</script>
 	<script type="application/javascript" src="countUp.min.js"></script>
