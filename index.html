@@ -22,9 +22,9 @@
 					])
 					.then(responses => {
 						return Promise.all([
-								responses[0].json(),
-								responses[1].text(),
-								responses[2].json()
+							responses[0].json(),
+							responses[1].text(),
+							responses[2].json()
 						])
 					})
 					.then(parsedResponses => {
@@ -34,18 +34,42 @@
 						populateGuesses(parsedResponses[2], pints)
 					})
 					.then(() => {
-						// all the content is fetched and the page has updated, do whatever you need to here
+						const observer = new IntersectionObserver(entries => {
+							// Loop over the entries
+							entries.forEach(entry => {
+								// If the element is visible
+								if (entry.isIntersecting) {
+									// Add the animation class
+									drinkPints();
+								}
+							});
+						});
+
+						observer.observe(document.querySelector("[data-pints]"));
+
 					});
+
 		});
+
+		function drinkPints(){
+			document.querySelectorAll(".beer-drunk").forEach(function(beer){
+				beer.classList.add('drink')
+			});
+		}
 
 		function populateDetails(totals) {
 			document.querySelector("[data-total]").innerText = totals.grandTotal;
 			document.querySelector("[data-target]").innerText = totals.target;
 			document.querySelector("[data-percentage]").innerText = totals.percentageRaised + "%"
+
+			let cappedPercentage = (totals.percentageRaised > 100) ? 100 : totals.percentageRaised;
+			document.querySelector("[data-percentage]").style.height = cappedPercentage + "%";
+			document.querySelector("[data-percentage]").style.color = "rgba(31,46,74,1)";
 		}
 
 		function populatePints(pints) {
 			document.querySelector("[data-pints]").innerText = pints
+
 			const pintHolder = document.querySelector("[data-pints-holder]")
 			for (let i = 0; i < pints; i++) {
 				const pint = document.createElement("div")
@@ -58,7 +82,7 @@
 				pint.appendChild(beer)
 				pint.appendChild(glass)
 
-				pintHolder.appendChild(pint)
+				pintHolder.appendChild(pint);
 			}
 		}
 
@@ -91,47 +115,47 @@
 	</script>
 </head>
 <body>
-	<div class="wrapper">
-		<section>
-			<h1>Walking <span>for</span> Sean</h1>
-			<div class="row row-reverse">
-				<div class="column">
-					<div class="progress">
-						<div class="beer" data-percentage>?</div>
-						<div class="pint-glass"></div>
-					</div>
-					<h2>&pound;<span data-total>?</span> / &pound;<span data-target>?</span></h2>
+<div class="wrapper">
+	<section>
+		<h1>Walking <span>for</span> Sean</h1>
+		<div class="row row-reverse">
+			<div class="column">
+				<div class="progress">
+					<div class="beer" data-percentage>?</div>
+					<div class="pint-glass"></div>
 				</div>
-
-				<div class="column">
-					<p>Mike & Bernie Crossey, Stuart Kent and Andy Hall are taking on Wainright's Coast to Coast walk,
-					in memory of Sean Crossey, with others joining them for sections along the way</p>
-					<p>This page tracks their beer consumption along the route.</p>
-					<p>Fancy having a guess at how mmany pints of the black stuff will be consumed along the way?</p>
-					<p>There's prizes to be won!</p>
-					<a href="https://www.justgiving.com/fundraising/walkingforseanc2c">Donate & have a guess on JustGiving</a>
-				</div>
-
-
+				<h2>&pound;<span data-total>?</span> / <span class="gold">&pound;<span data-target>?</span></span></h2>
 			</div>
-		</section>
-		<section class="clearfix" data-pints-holder>
-			<h1>Pints so far <span data-pints>?</span></h1>
-		</section>
 
-		<section>
-			<div class="row row-lists">
-				<div class="column">
-					<h1>First at the bar</h1>
-					<ul class="winners" data-winners>
-					</ul>
-				</div>
-				<div class="gutter"></div>
-				<div class="column">
-					<h1>Last orders</h1>
-					<ul class="losers" data-losers>
-					</ul>
-				</div>
-	</div>
+			<div class="column">
+				<p>Mike & Bernie Crossey, Stuart Kent and Andy Hall are taking on Wainright's Coast to Coast walk,
+					in memory of Sean Crossey, with others joining them for sections along the way</p>
+				<p>This page tracks their beer consumption along the route.</p>
+				<p>Fancy having a guess at how many pints of the black stuff will be consumed along the way?</p>
+				<p>There are prizes to be won!</p>
+				<a href="https://www.justgiving.com/fundraising/walkingforseanc2c">Donate & have a guess on JustGiving</a>
+			</div>
+
+
+		</div>
+	</section>
+	<section class="clearfix" data-pints-holder>
+		<h1>Pints so far <span data-pints>?</span></h1>
+	</section>
+
+	<section>
+		<div class="row row-lists">
+			<div class="column">
+				<h1>First at the bar</h1>
+				<ul class="winners" data-winners>
+				</ul>
+			</div>
+			<div class="gutter"></div>
+			<div class="column">
+				<h1>Last orders</h1>
+				<ul class="losers" data-losers>
+				</ul>
+			</div>
+		</div>
 </body>
 </html>
