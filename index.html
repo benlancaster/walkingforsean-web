@@ -20,12 +20,22 @@
 						fetch(API + PINTS),
 						fetch(API + GUESSES),
 					])
-					.then(async (responses) => {
-						const pints = await responses[1].text()
-						populateDetails(await responses[0].json())
-						populatePints(pints)
-						populateGuesses(await responses[2].json(), pints)
+					.then(responses => {
+						return Promise.all([
+								responses[0].json(),
+								responses[1].text(),
+								responses[2].json()
+						])
 					})
+					.then(parsedResponses => {
+						const pints = parsedResponses[1]
+						populateDetails(parsedResponses[0])
+						populatePints(pints)
+						populateGuesses(parsedResponses[2], pints)
+					})
+					.then(() => {
+						// all the content is fetched and the page has updated, do whatever you need to here
+					});
 		});
 
 		function populateDetails(totals) {
