@@ -110,8 +110,8 @@ a:hover{
 	color: rgba(31,46,74,0);
 	height: 0px;
 	line-height: 100px;
-	transition: height ease-in-out 1s,
-	lineHeight ease-in-out 1s,
+	transition: height ease-in-out 2s,
+	lineHeight ease-in-out 2s,
 	color linear .4s .6s;
 }
 

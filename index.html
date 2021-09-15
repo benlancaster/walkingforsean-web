@@ -58,9 +58,14 @@
 		}
 
 		function populateDetails(totals) {
-			document.querySelector("[data-total]").innerText = totals.grandTotal;
-			document.querySelector("[data-target]").innerText = totals.target;
+			try {
+				new CountUp(document.querySelector("[data-total]"), totals.grandTotal).start()
+			} catch (e) {
+				document.querySelector("[data-total]").innerText = totals.grandTotal;
+			}
 			document.querySelector("[data-percentage]").innerText = totals.percentageRaised + "%"
+
+			document.querySelector("[data-target]").innerText = totals.target;
 
 			let cappedPercentage = (totals.percentageRaised > 100) ? 100 : totals.percentageRaised;
 			document.querySelector("[data-percentage]").style.height = cappedPercentage + "%";
@@ -68,7 +73,11 @@
 		}
 
 		function populatePints(pints) {
-			document.querySelector("[data-pints]").innerText = pints
+			try {
+				new CountUp(document.querySelector("[data-pints]"), pints).start()
+			} catch (e) {
+				document.querySelector("[data-pints]").innerText = pints
+			}
 
 			const pintHolder = document.querySelector("[data-pints-holder]")
 			for (let i = 0; i < pints; i++) {
@@ -113,6 +122,7 @@
 			return Math.floor(Math.random() * (max - min + 1) + min)
 		}
 	</script>
+	<script type="application/javascript" src="countUp.min.js"></script>
 </head>
 <body>
 <div class="wrapper">
