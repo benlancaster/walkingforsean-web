@@ -36,17 +36,9 @@
 					})
 					.then(pints => {
 						const observer = new IntersectionObserver(entries => {
-							// Loop over the entries
 							entries.forEach(entry => {
-								// If the element is visible
 								if (entry.isIntersecting) {
-									// Add the animation class
-									drinkPints();
-									try {
-										new CountUp(document.querySelector("[data-pints]"), pints).start();
-									} catch (e) {
-										document.querySelector("[data-pints]").innerText = pints;
-									}
+									drinkPints(pints);
 								}
 							});
 						});
@@ -56,8 +48,18 @@
 
 		});
 
-		function drinkPints(){
-			document.querySelectorAll(".beer-drunk").forEach(beer => beer.classList.add('drink'));
+		let isDrunk = false;
+
+		function drinkPints(pints){
+			if(!isDrunk){
+				document.querySelectorAll(".beer-drunk").forEach(beer => beer.classList.add('drink'));
+				try {
+					new CountUp(document.querySelector("[data-pints]"), pints).start();
+				} catch (e) {
+					document.querySelector("[data-pints]").innerText = pints;
+				}
+				isDrunk = true;
+			}
 		}
 
 		function populateDetails(totals) {
