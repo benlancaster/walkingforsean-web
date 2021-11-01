@@ -9,16 +9,15 @@
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-touch-fullscreen" content="yes" />
 	<script type="application/javascript">
-		const API = "https://walkingforsean.herokuapp.com"
-		const DETAILS = "/total"
-		const GUESSES = "/guesses"
-		const PINTS = "/pints"
+		const DETAILS = "/total.json"
+		const GUESSES = "/guesses.json"
+		const PINTS = "/pints.json"
 		window.addEventListener("DOMContentLoaded", () => {
 			Promise
 					.all([
-						fetch(API + DETAILS),
-						fetch(API + PINTS),
-						fetch(API + GUESSES),
+						fetch(DETAILS),
+						fetch(PINTS),
+						fetch(GUESSES),
 					])
 					.then(responses => {
 						return Promise.all([
